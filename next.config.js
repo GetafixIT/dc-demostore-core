@@ -22,6 +22,7 @@ module.exports = (phase, { defaultConfig }) => {
             }
             return config;
         },
+        reactStrictMode: false,
         // experimental: { granularChunks: true },
         sassOptions: {
             includePaths: [path.join(__dirname, 'styles')],

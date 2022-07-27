@@ -23,13 +23,16 @@ type Props = {
     focalPointHide: boolean;
 } & CmsContent;
 
-const ShoppableImage: FC<Props> = ({
-    shoppableImage,
-    //scaleToFit = false,
-    hotspotHide = false,
-    polygonHide = false,
-    focalPointHide = true
-}) => {
+const ShoppableImage: FC<Props> = (props) => {
+
+    const {
+        shoppableImage,
+        //scaleToFit = false,
+        hotspotHide = false,
+        polygonHide = false,
+        focalPointHide = true
+    } = props;
+
     const windowSize = useWindowContext();
     const refContainer = useRef<HTMLInputElement>(null);
     const [loaded, setLoaded] = useState(false);
@@ -61,7 +64,7 @@ const ShoppableImage: FC<Props> = ({
             setTargetHeight(imageRef.current.height);
             setTargetWidth(imageRef.current.width);
             //console.log('ratio:', ratio)
-            //console.log('imageSize:', imageSize) 
+            //console.log('imageSize:', imageSize)
             console.log('targetHeight:', targetHeight)
         }
     }
@@ -71,7 +74,7 @@ const ShoppableImage: FC<Props> = ({
         return () => window.removeEventListener("resize", resizeWindow);
     }, [loaded])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (refContainer.current) {
             setCanvasSize({
                 w: refContainer.current.offsetWidth,
@@ -260,11 +263,22 @@ const ShoppableImage: FC<Props> = ({
     }, [src]);
 
     return (
+      <>
+      {/*<pre>{JSON.stringify(props, null, 2)}</pre>*/}
+
+      {/*<pre>*/}
+      {/*    src: {src}<br/>*/}
+      {/*    shoppableImage.image.defaultHost: {shoppableImage.image.defaultHost}<br/>*/}
+      {/*    shoppableImage.image.endpoint: {shoppableImage.image.endpoint}<br/>*/}
+      {/*    shoppableImage.image.name: {shoppableImage.image.name}<br/>*/}
+      {/*</pre>*/}
+
         <div ref={refContainer} className="amp-vis-page" style={{ height: targetHeight }}>
             {image || false}
             {image && !loaded && <CircularProgress />}
             {canvas || false}
         </div>
+      </>
     );
 }
 

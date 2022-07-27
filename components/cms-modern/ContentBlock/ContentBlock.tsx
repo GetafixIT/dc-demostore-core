@@ -26,6 +26,7 @@ import PersonalizedBannerSlot   from '@components/cms-modern/PersonalizedBannerS
 import ProductGrid              from '@components/cms/ProductGrid';
 import ProductContent           from '@components/cms-modern/ProductContent';
 import ShoppableImage           from '@components/cms-modern/ShoppableImage';
+import ShoppableVideo           from '@components/cms-modern/ShoppableVideo';
 import SimpleBanner             from '@components/cms-modern/SimpleBanner';
 import Slider                   from '@components/cms-modern/Slider';
 import SplitBlock               from '@components/cms-modern/SplitBlock';
@@ -63,6 +64,7 @@ const ComponentMapping: any = {
     'https://demostore.amplience.com/content/product-grid'           : ProductGrid,
     'https://demostore.amplience.com/content/rich-text'              : CustomRichText,
     'https://demostore.amplience.com/content/shoppable-image'        : ShoppableImage,
+    'https://demostore.amplience.com/content/shoppable-video'        : ShoppableVideo,
     'https://demostore.amplience.com/content/simple-banner'          : SimpleBanner,
     'https://demostore.amplience.com/content/simple-localized-banner': SimpleBanner,
     'https://demostore.amplience.com/content/slider'                 : Slider,
@@ -80,7 +82,7 @@ const ComponentMapping: any = {
     'https://demostore.amplience.com/slots/landing-page'             : BannerSlot,
     'https://demostore.amplience.com/slots/localized-banner'         : LocalizedBannerSlot,
     'https://demostore.amplience.com/slots/personalized-banner'      : PersonalizedBannerSlot
-    
+
 };
 
 const ContentBlock: FC<Props> = ({content: originalContent, type = 'CONTENT', components = ComponentMapping}) => {
@@ -98,7 +100,7 @@ const ContentBlock: FC<Props> = ({content: originalContent, type = 'CONTENT', co
     const content = liveContent;
     const Component = components[content._meta.schema];
     const children = Component ? <Component {...content} /> : <>{JSON.stringify(content)}</>;
-    
+
     const wrappedChildren = (
         type === 'SLOT' ? (
             <CmsSlot key={ nanoid() } content={content}>

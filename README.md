@@ -95,34 +95,50 @@ Please refer directly to the [this README on how to Install/Configure/Use the CL
 
 Once you have installed the `demostore` CLI tool, you can provision your account in two easy steps:
 
-1. Register your instance using the CLI command `env add`
+## 1. Request a client ID and Secret
+
+You will need to [request a Client ID and secret](https://support.amplience.com/support/catalog/items/90). Which you
+will need in the next step, if you don't have access you can ask a colleague to do this on your behalf.
+
+![request client id and secret](media/requestClientIdSeccret.png)
+
+`Account name` is the email address you use to login to Dynamic Content, which should be an alias of your amplience
+email address.
+
+`Client ID label`, is an artibrary value.
+
+`Which Environemnt` is DC-API
+
+This will take a day or so to come back. After which you can run the next step.
+
+2. Register your instance using the CLI command `env add`
+
+
 
 ```sh
-% demostore env add 
-✔ env name: · mydcinstance
-✔ app deployment url: · https://mydomain.com
-✔ cms client id: · zzzzzzzz-yyyy-yyyy-yyyy-xxxxxxxxxxxx
-✔ cms client secret: · ****************************************************************
-✔ cms hub id: · xxxxxxxxxxxxxxx
-✔ dam username: · youremail@domain.com
-✔ dam password: · ********
-info: [ amprsatest ] configure dc-cli...
-info: [ amprsatest ] environment active
-info: run [ env,add ]: started at Mon Mar 28 2022 12:39:21 GMT+0200 (Central European Summer Time)
+demostore env add 
+```
+This will prompt for the following info:
+
+```sh
+? env name: [name your config]
+? app deployment url: [Your published vercel domain with no trailing slach]
+? cms client id: [from step 1]
+? cms client secret: [from step 1]
+? cms hub id: [find this Dynamic Content > Settings > Properties]
+? dam username: [Dynamic Content username/email address]
+? dam password: [Dynamic Content Password]
 ```
 
-2. You can provision your instance using the CLI command `import` [(more information on the CLI tool project page)](https://github.com/amplience/dc-demostore-cli):
+
+3. You can provision your instance using the CLI command `import` [(more information on the CLI tool project page)](https://github.com/amplience/dc-demostore-cli):
 
 ```sh
-% demostore import --latest
-info: run [ import ]: started at Mon Mar 28 2022 12:45:26 GMT+0200 (Central European Summer Time)
-...
-...
-...
-info: run completed in [ 3m20s ]
+demostore import --latest
 ```
 
 > Note: If you ever need to revert, simply run the `cleanup` command.
+
 
 ## Change dc-demostore-core Config / Point to your account
 - Create a .env.local file on the root of your project:
@@ -138,7 +154,6 @@ Your setting with your Hub Name {hubname}
 ```sh
 NEXT_PUBLIC_DEMOSTORE_CONFIG_LOCATOR={hubname}:default
 ```
-
 
 If you are using services like Vercel, you can configure the environment variable in the settings, and re-deploy your application.
 

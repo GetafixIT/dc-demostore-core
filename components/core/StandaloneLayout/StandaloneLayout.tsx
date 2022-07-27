@@ -14,9 +14,9 @@ interface Props {
 const StandaloneLayout: FC<Props> = ({ children, pageProps }) => {
     return (
         <WithThemesContext themes={pageProps.hierarchies.themes}>
-            <WithCMSTheme
-                themes={pageProps.hierarchies.themes}
-            >
+                <WithCMSTheme
+                    themes={pageProps.hierarchies.themes}
+                >
                 <WithNavigationContext
                     pages={pageProps.hierarchies.pages}
                     categories={pageProps.ecommerce.categories}
