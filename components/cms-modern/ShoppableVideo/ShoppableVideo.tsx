@@ -1,4 +1,14 @@
-import React, {FC, forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState} from 'react'
+// @ts-nocheck
+import React, {
+  FC,
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react'
 import {CmsContent} from '@lib/cms/CmsContent';
 import {pointsToSVGPath, SVGPath} from './polygon'
 import {ShoppableImageHotspot, ShoppableImagePolygon,} from "./ShoppableVideoData";
@@ -22,8 +32,18 @@ type Props = {
   focalPointHide: boolean;
 } & CmsContent;
 
+type MarkerProps = {
+  titleStr: string;
+  linkHref: string;
+  points: [],
+  i: number,
+  tl: any,
+  ref: HTMLDivElement,
+  gsap: any
+}
 
-const Marker = forwardRef(({titleStr, linkHref, points, i, tl, gsap}, ref) => {
+
+const Marker: ForwardedRef<any> = forwardRef(({titleStr, linkHref, points, i, tl, gsap}, ref) => {
   const el = useRef();
   const startX = points[0]?.p?.x;
   const startY = points[0]?.p?.y;
