@@ -10,6 +10,9 @@ import {nanoid} from 'nanoid'
 import {AnimationCanvas} from './style';
 import {Controls, PlayState, Timeline, Tween} from "react-gsap";
 import {gsap} from "gsap";
+import { MotionPathPlugin } from "gsap/dist/MotionPathPlugin";
+
+gsap.registerPlugin(MotionPathPlugin);
 
 type Props = {
   shoppableVideo: any;
@@ -20,7 +23,7 @@ type Props = {
 } & CmsContent;
 
 
-const Marker = forwardRef(({titleStr, linkHref, points, i, tl}, ref) => {
+const Marker = forwardRef(({titleStr, linkHref, points, i, tl, gsap}, ref) => {
   const el = useRef();
   const startX = points[0]?.p?.x;
   const startY = points[0]?.p?.y;
@@ -29,11 +32,22 @@ const Marker = forwardRef(({titleStr, linkHref, points, i, tl}, ref) => {
 
     // return our API
     return {
-      startFrom(from){
-        tl.current.from(el.current, {...from});
+      startFrom(props){
+        let method = 'from'
+        // if(props.delay > 0){
+        //   method = 'to'
+        //   tl.current.from(el.current, { duration: props.delay - 0.4, opacity: 0 });
+        // }
+        tl.current.from(el.current, props);
       },
-      moveTo(to) {
-        tl.current.to(el.current, to);
+      moveTo(props) {
+        tl.current.to(el.current, props);
+      },
+      endOn(props){
+        tl.current.to(el.current, props);
+      },
+      setTotalDuration(totalDuration){
+        tl.current.totalDuration(7.56);
       },
       points
     };
@@ -114,7 +128,7 @@ const ShoppableVideo: FC<Props> = (props) => {
     };
 
     const playListener = (event) => {
-      console.log('play');
+      console.log('play', event);
       // setVideoRunning(PlayState.play)
       tl.current.play();
     }
@@ -136,41 +150,38 @@ const ShoppableVideo: FC<Props> = (props) => {
 
 
     markerRefs.current.forEach((ref, i) => {
-
-      console.log("ref", ref)
+      const isLastMarker = i === markerRefs.current.length - 1;
 
         ref.points.forEach((point, pi) => {
           const start = pi === 0;
-          const end = pi === ref.points.length-1;
+          const newSequence = pi > 0 && ref.points[pi - 1].e === true;
 
-
-          const thisPoint = point;
-          if(start){
+          if(start || newSequence){
             const from = {
-              left: `${thisPoint.p.x * 100}%`,
-              top: `${thisPoint.p.y * 100}%`,
+              delay: point.t,
+              left: `${point.p.x * 100}%`,
+              top: `${point.p.y * 100}%`,
             }
             ref.startFrom(from)
           }
-          else if(end){
-            const to = {opacity: 0}
-            ref.moveTo(to)
-          }
           else{
-            const nextPoint = ref.points[pi + 1];
-            if (nextPoint) {
-              const to = {
-                duration: nextPoint.t - thisPoint.t,
-                left: `${nextPoint.p.x * 100}%`,
-                top: `${nextPoint.p.y * 100}%`
-              }
-              ref.moveTo(to)
-            } else {
+            const prev = ref.points[pi-1]
+            ref.moveTo({
+              duration: point.t - prev.t,
+              left: `${point.p.x * 100}%`,
+              top: `${point.p.y * 100}%`
+            })
+          }
 
-            }
+          if(point.e === true){
+            ref.endOn({duration: 0.4, opacity: 0})
           }
 
         })
+
+      if(isLastMarker){
+        ref.setTotalDuration(54.8)
+      }
     })
 
     return () => {
@@ -232,19 +243,13 @@ const ShoppableVideo: FC<Props> = (props) => {
                 (shoppableVideo.hotspots as ShoppableImagePolygon[])[index]
               )}
             >
-              <>{
 
-                <span className="caption" style={{
-                  left: `${hotspot.timeline.points[0]?.cta?.x * 100}%`,
-                  top: `${hotspot.timeline.points[0]?.cta?.y * 100}%`,
-                }}>
-                        {hotspot?.cta?.caption || ''}
-                    </span>
-
-
-              }
-              </>
-
+              <span className="caption" style={{
+                left: `${hotspot.timeline.points[0]?.cta?.x * 100}%`,
+                top: `${hotspot.timeline.points[0]?.cta?.y * 100}%`,
+              }}>
+                {hotspot?.cta?.caption || ''}
+              </span>
 
               {/*<Tooltip*/}
               {/*    title={hotspotTitle(*/}
@@ -269,6 +274,7 @@ const ShoppableVideo: FC<Props> = (props) => {
               points={hotspot.timeline.points}
               ref={addMarkerRef}
               tl={tl}
+              gsap={gsap}
             />
           </div>
 
@@ -278,44 +284,17 @@ const ShoppableVideo: FC<Props> = (props) => {
     );
   }
 
-  let video: JSX.Element | undefined;
-  let src = "invalid";
-  if (shoppableVideo && shoppableVideo.video.id) {
-    const imageHost = shoppableVideo.video.defaultHost
-    const src = `https://${imageHost}/v/${shoppableVideo.video.endpoint}/${encodeURIComponent(
-      shoppableVideo.video.name
-    )}/mp4_720p`;
-
-    video = (
-      <video controls style={{width: `100%`, zIndex: "1"}} ref={refVideo}>
-        <source src={src} type="video/mp4"/>
-      </video>
-    );
-  }
+  const videoSrc = `https://${shoppableVideo.video.defaultHost}/v/${shoppableVideo.video.endpoint}/${encodeURIComponent(
+    shoppableVideo.video.name
+  )}/mp4_720p`;
 
   return (
-    <>
-      <div ref={refContainer} className="amp-vis-page" style={{height: "fit-content", margin: "30px 0"}}>
-        {video}
-        {canvas || false}
-      </div>
-      <div>
-            <pre>
-              Head position: {headPosition}<br/>
-              Running: {videoRunning}<br/>
-              width: {imageSize.w}<br/>
-              height:{imageSize.h}<br/>
-              duration: {refVideo?.current?.duration || 0}<br/>
-              head percentage: {(headPosition / refVideo?.current?.duration) * 100}<br/>
-                keyframe 1: 0<br/>
-                keyframe 2: {(3.5517162775441267 / refVideo?.current?.duration) * 100}<br/>
-                keyframe 3: {(5.950650363395189 / refVideo?.current?.duration) * 100}<br/>
-            </pre>
-      </div>
-      <div>
-        <pre>{JSON.stringify(shoppableVideo, null, 3)}</pre>
-      </div>
-    </>
+    <div ref={refContainer} className="amp-vis-page" style={{height: "fit-content", margin: "30px 0"}}>
+      <video controls style={{width: `100%`, zIndex: "1"}} ref={refVideo}>
+        <source src={videoSrc} type="video/mp4"/>
+      </video>
+      {canvas}
+    </div>
   );
 }
 
