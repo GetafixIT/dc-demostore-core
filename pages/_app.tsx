@@ -18,7 +18,7 @@ import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
 import ErrorPage from 'next/error';
-import { ConfigContext } from '../components/core/Config';
+import { ConfigContext } from '@components/core/Config';
 
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());

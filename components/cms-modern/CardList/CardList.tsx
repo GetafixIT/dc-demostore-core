@@ -5,6 +5,7 @@ import { CmsContent } from '@lib/cms/CmsContent';
 import { withStyles, WithStyles } from '@mui/styles'
 import { Theme } from '@mui/material';
 import Card from '../Card'
+import CardIcon from '../CardIcon'
 
 
 const styles = (theme: Theme) => ({
@@ -13,38 +14,38 @@ const styles = (theme: Theme) => ({
 
 interface CardListProps extends WithStyles<typeof styles> {
     className?: string;
-
-    /**
-     * Card List Header
-     */
     header?: string;
-    
-    /**
-     * List of Cards
-     */
+    align?: 'left' | 'right' | 'center';
     cards?: CmsContent[];
 }
 
-const CardList: React.FC<CardListProps> = ({ 
+const CardList: React.FC<CardListProps> = ({
   header,
-  cards,
+  align = 'left',
+  cards = [],
   classes
 }) => {
+
+  const cardsList = cards.map((item) => {
+    return item._meta.schema.indexOf('card-icon') > -1 ? {...item, component: CardIcon} : {...item, component: Card}
+  })
+
   return (
       <Box data-testid="CardList" className={classes.root}>
       {
-          header && ( 
-              <Typography variant="h2" component="h2">
+          header && (
+              <Typography variant="h2" component="h2" align={align}>
                   {header}
               </Typography>
           )
       }
       {
           cards && (
-              <Grid container>
+              <Grid style={{justifyContent: 'space-between'}} container>
                   {
-                      cards.map((card: any, index: number) => {
-                          return <Card key={ Math.random().toString(36).substr(2, 9) } {...card} />
+                    cardsList.map((card: any, index: number) => {
+                          const Comp = card.component;
+                          return <Comp key={ Math.random().toString(36).substr(2, 9) } {...card} />
                       })
                   }
               </Grid>

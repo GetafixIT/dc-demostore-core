@@ -26,13 +26,21 @@ const WithVisualization: React.FC<Props> = (props) => {
     const [formModel, setFormModel] = useState<any>(null);
 
     useEffect(() => {
+
+        const isLoadedInIframe = window.location !== window.parent.location;
+
+        if (!isLoadedInIframe) {
+            // Prevents the subscription if not loaded in iFrame
+            return;
+        }
+
         setStatus('connecting');
 
         let removeChangedSubscription: any = undefined;
 
         init({connectionTimeout: 30000, debug: true}).then(async (sdk: any) => {
             const value: any = await sdk.form.get();
-            
+
             removeChangedSubscription = sdk.form.changed((value: any) => {
                 console.log('changed');
                 try {
@@ -40,7 +48,7 @@ const WithVisualization: React.FC<Props> = (props) => {
                 } catch(error) {
                 }
             });
-            
+
             sdk.form.saved((value: any) => {
                 window.location.reload();
             });
@@ -71,7 +79,7 @@ const WithVisualization: React.FC<Props> = (props) => {
 export function useContent(content: any, vse: string): [any, any | undefined] {
     const { formModel } = useVisualization() || {};
     if ( vse === '' ) {
-        return [content, undefined]; 
+        return [content, undefined];
     }
     if (formModel && formModel._meta?.deliveryId === content?._meta?.deliveryId) {
         return [formModel, content];

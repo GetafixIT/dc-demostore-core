@@ -20,8 +20,24 @@ module.exports = (phase, { defaultConfig }) => {
                     util: false
                 }
             }
+            config.module.rules.push({
+                test: /\.svg$/i,
+                issuer: { and: [/\.(js|ts|md)x?$/] },
+                use: [
+                    {
+                        loader: "@svgr/webpack",
+                        options: {
+                            svgoConfig: { plugins: [{
+                                    name: 'removeViewBox',
+                                    active: false
+                                }] },
+                        },
+                    },
+                ],
+            });
             return config;
         },
+        reactStrictMode: false,
         // experimental: { granularChunks: true },
         sassOptions: {
             includePaths: [path.join(__dirname, 'styles')],

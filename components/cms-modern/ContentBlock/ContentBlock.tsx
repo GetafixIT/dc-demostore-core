@@ -9,6 +9,7 @@ import Blog                     from '@components/cms-modern/Blog';
 import BlogList                 from '@components/cms/BlogList';
 import BlogSnippet              from '@components/cms/BlogSnippet';
 import Card                     from '@components/cms-modern/Card';
+import CardIcon                 from '@components/cms-modern/CardIcon';
 import CardList                 from '@components/cms-modern/CardList';
 import CmsContentItem           from '@components/cms-modern/CmsContentItem';
 import CmsEdition               from '@components/cms-modern/CmsEdition';
@@ -26,6 +27,7 @@ import PersonalizedBannerSlot   from '@components/cms-modern/PersonalizedBannerS
 import ProductGrid              from '@components/cms/ProductGrid';
 import ProductContent           from '@components/cms-modern/ProductContent';
 import ShoppableImage           from '@components/cms-modern/ShoppableImage';
+import ShoppableVideo           from '@components/cms-modern/Shoppable/video/video';
 import SimpleBanner             from '@components/cms-modern/SimpleBanner';
 import Slider                   from '@components/cms-modern/Slider';
 import SplitBlock               from '@components/cms-modern/SplitBlock';
@@ -35,6 +37,7 @@ import ThemePaletteSpec         from '@components/cms-modern/ThemePaletteSpec';
 import ThemeTypographySpec      from '@components/cms-modern/ThemeTypographySpec';
 import ThemeWrapper             from '@components/cms-modern/ThemeWrapper';
 import Video                    from '@components/cms-modern/Video';
+import Faqs                     from '@components/cms-modern/Faqs';
 
 import { useRouter } from 'next/router';
 
@@ -54,15 +57,17 @@ const ComponentMapping: any = {
     'https://demostore.amplience.com/content/blog'                   : Blog,
     'https://demostore.amplience.com/content/card-list'              : CardList,
     'https://demostore.amplience.com/content/card'                   : Card,
+    'https://demostore.amplience.com/content/card-icon'              : CardIcon,
     'https://demostore.amplience.com/content/container'              : Container,
     'https://demostore.amplience.com/content/curated-product-grid'   : CuratedProductGrid,
     'https://demostore.amplience.com/content/dynamic-blog-list'      : DynamicBlogList,
-    'https://demostore.amplience.com/content/html'                   : ExternalBlock,
+    'https://demostore.amplience.com/content/html'                   : Text,
     'https://demostore.amplience.com/content/image'                  : Image,
     'https://demostore.amplience.com/content/landing-page'           : LandingPage,
     'https://demostore.amplience.com/content/product-grid'           : ProductGrid,
     'https://demostore.amplience.com/content/rich-text'              : CustomRichText,
     'https://demostore.amplience.com/content/shoppable-image'        : ShoppableImage,
+    'https://demostore.amplience.com/content/shoppable-video'        : ShoppableVideo,
     'https://demostore.amplience.com/content/simple-banner'          : SimpleBanner,
     'https://demostore.amplience.com/content/simple-localized-banner': SimpleBanner,
     'https://demostore.amplience.com/content/slider'                 : Slider,
@@ -72,6 +77,7 @@ const ComponentMapping: any = {
     'https://demostore.amplience.com/content/theme-wrapper'          : ThemeWrapper,
     'https://demostore.amplience.com/content/video'                  : Video,
     'https://demostore.amplience.com/content/product'                : ProductContent,
+    'https://demostore.amplience.com/content/faq'                    : Faqs,
     'https://demostore.amplience.com/site/palette'                   : ThemePaletteSpec,
     'https://demostore.amplience.com/site/typography'                : ThemeTypographySpec,
     'https://demostore.amplience.com/slots/banner'                   : BannerSlot,
@@ -80,7 +86,6 @@ const ComponentMapping: any = {
     'https://demostore.amplience.com/slots/landing-page'             : BannerSlot,
     'https://demostore.amplience.com/slots/localized-banner'         : LocalizedBannerSlot,
     'https://demostore.amplience.com/slots/personalized-banner'      : PersonalizedBannerSlot
-    
 };
 
 const ContentBlock: FC<Props> = ({content: originalContent, type = 'CONTENT', components = ComponentMapping}) => {
@@ -98,7 +103,7 @@ const ContentBlock: FC<Props> = ({content: originalContent, type = 'CONTENT', co
     const content = liveContent;
     const Component = components[content._meta.schema];
     const children = Component ? <Component {...content} /> : <>{JSON.stringify(content)}</>;
-    
+
     const wrappedChildren = (
         type === 'SLOT' ? (
             <CmsSlot key={ nanoid() } content={content}>

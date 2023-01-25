@@ -70,6 +70,7 @@
     "@storybook/builder-webpack5": "^6.5.0-alpha.45",
     "@storybook/manager-webpack5": "^6.5.0-alpha.45",
     "@storybook/react": "^6.5.0-alpha.45",
+    "@svgr/webpack": "^6.3.1",
     "@types/json-stringify-safe": "^5.0.0",
     "@types/lodash": "^4.14.168",
     "@types/node": "^17.0.14",
